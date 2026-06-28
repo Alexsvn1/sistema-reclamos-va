@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mt-4 mb-5">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0"><i class="bi bi-inboxes text-institucional me-2"></i>Bandeja General de Tickets</h2>
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle shadow-sm px-4" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-funnel me-1"></i>
+                    {% if estado_actual %}
+                        Filtro: {{ estado_actual }}
+                    {% else %}
+                        Filtrar por Estado
+                    {% endif %}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
+                    <li><a class="dropdown-item {% if not estado_actual %}active bg-institucional{% endif %}" href="/bandeja-tickets">Todos los tickets</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item {% if estado_actual == 'Pendiente' %}active bg-institucional{% endif %}" href="/bandeja-tickets?estado=Pendiente"><i class="bi bi-clock me-2 text-muted"></i>Pendientes</a></li>
+                    <li><a class="dropdown-item {% if estado_actual == 'Asignado' %}active bg-institucional{% endif %}" href="/bandeja-tickets?estado=Asignado"><i class="bi bi-person-check me-2 text-muted"></i>Asignados</a></li>
+                    <li><a class="dropdown-item {% if estado_actual == 'En Proceso' %}active bg-institucional{% endif %}" href="/bandeja-tickets?estado=En Proceso"><i class="bi bi-tools me-2 text-muted"></i>En Proceso</a></li>
+                    <li><a class="dropdown-item {% if estado_actual == 'Resuelto' %}active bg-institucional{% endif %}" href="/bandeja-tickets?estado=Resuelto"><i class="bi bi-check-circle me-2 text-muted"></i>Resueltos</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm border-0" style="border-top: 5px solid #424242;">
+            <div class="card-body p-0">
+                
+                {% if tickets %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-muted">
+                            <tr>
+                                <th scope="col" class="ps-4 py-3">ID</th>
+                                <th scope="col" class="py-3">Fecha de Ingreso</th>
+                                <th scope="col" class="py-3">Ciudadano</th>
+                                <th scope="col" class="py-3">Tipología</th>
+                                <th scope="col" class="py-3">Prioridad</th>
+                                <th scope="col" class="py-3">Estado</th>
+                                <th scope="col" class="pe-4 py-3 text-end">Gestión</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in tickets %}
+                            <tr>
+                                <td class="ps-4 fw-bold text-secondary">#{{ t[0] }}</td>
+                                <td>{{ t[1].strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td class="fw-semibold text-dark"><i class="bi bi-person me-1 text-muted"></i>{{ t[5] }}</td>
+                                <td>{{ t[2] }}</td>
+                                
+                                <td>
+                                    {% if t[3] == 'Alta' %}
+                                        <span class="badge bg-danger">Alta</span>
+                                    {% elif t[3] == 'Media' %}
+                                        <span class="badge bg-warning text-dark">Media</span>
+                                    {% else %}
+                                        <span class="badge bg-info text-dark">Baja</span>
+                                    {% endif %}
+                                </td>
+                                
+                                <td>
+                                    {% if t[4] == 'Pendiente' %}
+                                        <span class="badge bg-secondary px-3 py-1 rounded-pill"><i class="bi bi-clock me-1"></i>Pendiente</span>
+                                    {% elif t[4] in ['Asignado', 'En Proceso'] %}
+                                        <span class="badge bg-warning text-dark px-3 py-1 rounded-pill"><i class="bi bi-tools me-1"></i>{{ t[4] }}</span>
+                                    {% elif t[4] == 'Esperando Materiales' %}
+                                        <span class="badge bg-info text-dark px-3 py-1 rounded-pill"><i class="bi bi-hourglass-split me-1"></i>Esperando Materiales</span>
+                                    {% elif t[4] == 'Resuelto' %}
+                                        <span class="badge bg-success px-3 py-1 rounded-pill"><i class="bi bi-check-circle me-1"></i>Resuelto</span>
+                                    {% elif t[4] == 'Desestimado' %}
+                                        <span class="badge bg-danger px-3 py-1 rounded-pill"><i class="bi bi-x-circle me-1"></i>Desestimado</span>
+                                    {% else %}
+                                        <span class="badge bg-dark px-3 py-1 rounded-pill">{{ t[4] }}</span>
+                                    {% endif %}
+                                </td>
+                                
+                                <td class="pe-4 text-end">
+                                    <a href="/ticket/{{ t[0] }}" class="btn btn-sm btn-dark rounded-pill px-3 fw-bold shadow-sm" title="Abrir y Asignar">Administrar</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-check2-circle display-1 text-success mb-3 opacity-50"></i>
+                    <h4 class="text-muted fw-bold">Bandeja Vacía</h4>
+                    <p class="text-secondary mb-0">No hay tickets activos en el sistema en este momento.</p>
+                </div>
+                {% endif %}
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold"><i class="bi bi-map text-primary"></i> Visor Geográfico (GIS)</h2>
+            <a href="/dashboard" class="btn btn-outline-secondary btn-sm rounded-pill">Volver</a>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="card shadow-sm border-0">
+                    <div id="map" style="height: 600px; width: 100%;"></div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card shadow-sm border-0 p-3">
+                    <h5>Referencias</h5>
+                    <p class="small text-muted">Tickets activos: <strong>{{ tickets|length }}</strong></p>
+                    <hr>
+                    <ul class="list-unstyled small">
+                        <li><i class="bi bi-circle-fill text-danger"></i> Crítica / Alta</li>
+                        <li><i class="bi bi-circle-fill text-warning"></i> Media</li>
+                        <li><i class="bi bi-circle-fill text-secondary"></i> Baja</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // 1. Inicializamos el mapa
+        var map = L.map('map').setView([-27.5738, -60.7153], 14);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // 2. Función de colores
+        function mapearColorPrioridad(prioridad) {
+            if (prioridad === 'Crítica' || prioridad === 'Alta') return '#dc3545';
+            if (prioridad === 'Media') return '#ffc107';
+            return '#6c757d';
+        }
+
+        // 3. Inyectamos los marcadores directo desde Jinja sin usar "let"
+        {% for t in tickets %}
+            {% if t[5] and t[6] %}
+                L.circleMarker([{{ t[5] }}, {{ t[6] }}], {
+                    radius: 9,
+                    fillColor: mapearColorPrioridad({{ t[2] | tojson }}),
+                    color: '#fff',
+                    weight: 2,
+                    fillOpacity: 0.85
+                }).addTo(map)
+                .bindPopup(`
+                    <div style="font-size: 12px;">
+                        <strong>#{{ t[0] }} - {{ t[1] }}</strong><br>
+                        <small>{{ t[4] | default('Sin descripción', true) | truncate(50, True, '...') }}</small><br>
+                        <a href="/ticket/{{ t[0] }}" class="mt-1 d-inline-block">Ver detalle</a>
+                    </div>
+                `);
+            {% endif %}
+        {% endfor %}
+    });
+</script>
+{% endblock %}

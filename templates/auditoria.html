@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mt-4 mb-5">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold mb-1 text-dark">
+                    <i class="bi bi-file-earmark-lock text-success me-2"></i>Auditoría Avanzada del Sistema
+                </h2>
+                <p class="text-muted mb-0 small">Registro inmutable de transacciones y operaciones críticas </p>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <a href="/dashboard" class="btn btn-outline-secondary btn-sm rounded-pill px-3 d-flex align-items-center">
+                    <i class="bi bi-arrow-left me-1"></i> Volver 
+                </a>
+                <a href="/auditoria/pdf" class="btn btn-success btn-sm rounded-pill px-4 shadow-sm fw-bold d-flex align-items-center">
+                    <i class="bi bi-file-earmark-pdf me-1"></i> Exportar PDF
+                </a>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark text-uppercase small">
+                            <tr>
+                                <th scope="col" class="ps-4 py-3" style="width: 100px;">ID Log</th>
+                                <th scope="col" class="py-3" style="width: 220px;">Fecha y Hora</th>
+                                <th scope="col" class="py-3" style="width: 150px;">Ref. Registro</th>
+                                <th scope="col" class="py-3" style="width: 160px;">Operación</th>
+                                <th scope="col" class="py-3" style="width: 220px;">Usuario Responsable</th>
+                                <th scope="col" class="pe-4 py-3">Detalle de Entidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if logs %}
+                                {% for log in logs %}
+                                <tr class="border-bottom">
+                                    <td class="ps-4 fw-bold text-secondary">#{{ log[0] }}</td>
+                                    
+                                    <td class="fw-semibold text-dark">
+                                        <i class="bi bi-clock text-muted me-2 small"></i>{{ log[1].strftime('%d/%m/%Y %H:%M:%S') }}
+                                    </td>
+                                    
+                                    <td>
+                                        {% if log[5] == 'tickets' %}
+                                            <a href="/ticket/{{ log[2] }}" class="badge bg-light text-dark border text-decoration-none px-2.5 py-1.5 fw-bold shadow-sm">
+                                                <i class="bi bi-ticket-perforated me-1 text-primary"></i>Ticket #{{ log[2] }}
+                                            </a>
+                                        {% else %}
+                                            <span class="badge bg-light text-muted border px-2.5 py-1.5 fw-bold">
+                                                ID #{{ log[2] }}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    
+                                    <td>
+                                        {% if log[3] == 'INSERT' %}
+                                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1.5 rounded-pill fw-bold text-uppercase" style="font-size: 0.75rem;">
+                                                <i class="bi bi-plus-circle-fill me-1"></i>Creación
+                                            </span>
+                                        {% elif log[3] == 'UPDATE' %}
+                                            <span class="badge bg-warning bg-opacity-10 text-warning-emphasis border border-warning border-opacity-25 px-3 py-1.5 rounded-pill fw-bold text-uppercase" style="font-size: 0.75rem;">
+                                                <i class="bi bi-pencil-square me-1"></i>Modificación
+                                            </span>
+                                        {% elif log[3] == 'SOFT_DELETE' or log[3] == 'DELETE' %}
+                                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-3 py-1.5 rounded-pill fw-bold text-uppercase" style="font-size: 0.75rem;">
+                                                <i class="bi bi-trash-fill me-1"></i>Eliminación
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-3 py-1.5 rounded-pill fw-bold text-uppercase" style="font-size: 0.75rem;">
+                                                {{ log[3] }}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    
+                                    <td class="fw-semibold text-dark">
+                                        <i class="bi bi-person-circle text-muted me-2"></i>{{ log[4] if log[4] else 'Sistema (Automático)' }}
+                                    </td>
+                                    
+                                    <td class="pe-4 text-muted small">
+                                        Tabla afectada: <code class="text-dark bg-light px-2 py-1 rounded border fw-bold">{{ log[5] }}</code>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-5">
+                                        <i class="bi bi-shield-check display-3 text-success opacity-50 mb-3 d-block"></i>
+                                        <h5 class="text-muted fw-bold">Sin registros de auditoría</h5>
+                                        <p class="text-secondary small mb-0">No se detectaron transacciones en la tabla <code>auditoria_avanzada</code>.</p>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

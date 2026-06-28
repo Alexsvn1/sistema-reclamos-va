@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.12) !important;
+    }
+    .cta-principal {
+        background-color: var(--verde-institucional);
+        color: white;
+        border: 2px solid var(--verde-claro);
+    }
+    .cta-principal:hover {
+        background-color: #1b5e20;
+    }
+    .kpi-card {
+        border-left: 4px solid var(--verde-institucional);
+        border-radius: 10px;
+    }
+</style>
+
+<div class="row mb-4 mt-3">
+    <div class="col-12">
+        <div class="card bg-dark text-white shadow-sm border-0" style="border-radius: 12px;">
+            <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="fw-bold mb-1">Panel de Control Operativo</h2>
+                    <p class="fs-6 opacity-75 mb-0">Secretaría de Servicios Públicos | Villa Ángela</p>
+                </div>
+                <div class="text-end d-none d-md-block">
+                    <span class="badge bg-success p-2 fs-6"><i class="bi bi-circle-fill text-white me-2" style="font-size: 0.5rem;"></i>Sistema En Línea</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5 g-3">
+    <div class="col-md-4">
+        <div class="card shadow-sm kpi-card bg-white p-3 hover-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1 fw-bold fs-6">Reclamos Activos</p>
+                    <h2 class="mb-0 text-institucional fw-bold">{{ activos }}</h2>
+                </div>
+                <div class="bg-light p-3 rounded-circle">
+                    <i class="bi bi-pin-map-fill fs-4 text-institucional"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm kpi-card bg-white p-3 hover-card" style="border-left-color: #ff9800;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1 fw-bold fs-6">En Proceso</p>
+                    <h2 class="mb-0 fw-bold" style="color: #ff9800;">{{ en_proceso }}</h2>
+                </div>
+                <div class="bg-light p-3 rounded-circle">
+                    <i class="bi bi-tools fs-4" style="color: #ff9800;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm kpi-card bg-white p-3 hover-card" style="border-left-color: var(--verde-claro);">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="text-muted mb-1 fw-bold fs-6">Resueltos Hoy</p>
+                    <h2 class="mb-0 fw-bold" style="color: var(--verde-claro);">{{ resueltos }}</h2>
+                </div>
+                <div class="bg-light p-3 rounded-circle">
+                    <i class="bi bi-check-circle-fill fs-4" style="color: var(--verde-claro);"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h5 class="fw-bold text-secondary mb-3"><i class="bi bi-boxes me-2"></i>Módulos de Gestión</h5>
+<div class="row g-4 mb-5">
+    
+    <div class="col-md-4">
+        <div class="card h-100 shadow cta-principal hover-card p-3">
+            <div class="card-body d-flex flex-column text-center">
+                <i class="bi bi-file-earmark-plus display-4 mb-3"></i>
+                <h4 class="card-title fw-bold">Auditoría</h4>
+                <p class="card-text opacity-75 mb-4">Registro inmutable de los cambios de estado y asignaciones.</p>
+                <a href="/auditoria" class="btn btn-light text-institucional rounded-pill mt-auto w-100 fw-bold shadow-sm py-2">Ver Logs</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm bg-white hover-card p-3 text-center border-0">
+            <div class="card-body d-flex flex-column">
+                <i class="bi bi-search display-4 mb-3 text-secondary"></i>
+                <h4 class="card-title fw-bold text-dark">Seguimiento</h4>
+                <p class="card-text text-muted mb-4">Control de tickets y gestión de las cuadrillas operativas en calle.</p>
+                <a href="/seguimiento" class="btn btn-outline-secondary rounded-pill mt-auto w-100 fw-bold py-2">Acceder al Visor</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm bg-white hover-card p-3 text-center border-0">
+            <div class="card-body d-flex flex-column">
+                <i class="bi bi-bar-chart-line display-4 mb-3 text-secondary"></i>
+                <h4 class="card-title fw-bold text-dark">Métricas SLA</h4>
+                <p class="card-text text-muted mb-4">Análisis de tiempos de respuesta, eficiencia y mapas de calor.</p>
+                <a href="/metricas" class="btn btn-outline-secondary rounded-pill mt-auto w-100 fw-bold py-2">Ver Reportes</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

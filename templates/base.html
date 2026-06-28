@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Incidencias - Villa Ángela</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --verde-institucional: #2E7D32;
+            --verde-claro: #66BB6A;
+            --fondo-gris: #F5F5F5;
+        }
+        body {
+            background-color: var(--fondo-gris);
+        }
+        .bg-institucional {
+            background-color: var(--verde-institucional) !important;
+        }
+        .text-institucional {
+            color: var(--verde-institucional) !important;
+        }
+        /* Scroll suave para los anclajes */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-institucional shadow-sm mb-4 py-2 sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" width="35" height="35" class="me-2 rounded-circle bg-white p-1">
+                <span class="fw-bold fs-5">Municipio de Villa Ángela</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                
+                {% if session.get('usuario_id') %}
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-4">
+                        
+                        {% if session.get('rol') in ['Administrador', 'Operador'] %}
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold" href="/dashboard"><i class="bi bi-grid-1x2 me-1"></i> Panel de Control</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold" href="/bandeja-tickets"><i class="bi bi-inboxes me-1"></i> Bandeja de Tickets</a>
+                        </li>
+                        
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold" href="/"><i class="bi bi-house me-1"></i> Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold" href="/nuevo-reclamo"><i class="bi bi-plus-square me-1"></i> Nuevo Reclamo</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold" href="/mis-tickets"><i class="bi bi-card-list me-1"></i> Mis Tickets</a>
+                        </li>
+                        {% endif %}
+                        
+                    </ul>
+                    
+                    <div class="d-flex align-items-center">
+                        <div class="dropdown">
+                            <a class="text-white text-decoration-none dropdown-toggle fw-bold d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle fs-4 me-2"></i> {{ session.get('nombre') }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-3">
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2 text-muted"></i> Mi Perfil</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger fw-bold" href="/logout"><i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                {% else %}
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-4">
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold" href="/">Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold" href="/#como-funciona"><i class="bi bi-info-circle me-1"></i> Sobre el Sistema</a>
+                        </li>
+                    </ul>
+                    
+                    <div class="d-flex align-items-center">
+                        <a href="/login" class="btn btn-outline-light me-2 fw-bold rounded-pill px-4">Ingresar</a>
+                        <a href="/registro" class="btn btn-light text-institucional fw-bold rounded-pill px-4 shadow-sm">Registrarse</a>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm mt-4" role="alert">
+                <strong>Aviso del Sistema:</strong> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

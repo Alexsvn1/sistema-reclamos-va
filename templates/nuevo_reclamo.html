@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+    /* Estilo para que el mapa se vea bien integrado */
+    #mapa-incidencia {
+        height: 350px;
+        width: 100%;
+        border-radius: 10px;
+        border: 2px solid #e0e0e0;
+    }
+</style>
+
+<div class="row justify-content-center mt-4 mb-5">
+    <div class="col-lg-10">
+        
+        <div class="d-flex align-items-center mb-4">
+            <a href="/" class="btn btn-outline-secondary rounded-circle me-3"><i class="bi bi-arrow-left"></i></a>
+            <h2 class="fw-bold mb-0">Registrar Nueva Incidencia</h2>
+        </div>
+
+        <div class="card shadow-sm border-0" style="border-top: 5px solid var(--verde-institucional);">
+            <div class="card-body p-4 p-md-5">
+                <form action="/guardar-reclamo" method="POST" enctype="multipart/form-data">
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-geo-alt-fill text-institucional me-2"></i>1. Ubicación del Problema</h5>
+                            <p class="text-muted small mb-2">Haga clic en el mapa para marcar el punto exacto de la incidencia.</p>
+                            
+                            <div id="mapa-incidencia" class="shadow-sm mb-3"></div>
+                            
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <input type="text" class="form-control bg-light text-muted" id="latitud" name="latitud" placeholder="Latitud" readonly required>
+                                </div>
+                                <div class="col-6">
+                                    <input type="text" class="form-control bg-light text-muted" id="longitud" name="longitud" placeholder="Longitud" readonly required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-card-text text-institucional me-2"></i>2. Detalles del Reclamo</h5>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Tipo de Incidencia</label>
+                                <select class="form-select" name="tipologia_id" required>
+                                    <option value="" selected disabled>Seleccione una categoría...</option>
+                                    {% for tipo in tipologias %}
+                                        <option value="{{ tipo[0] }}">{{ tipo[1] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Prioridad Sugerida</label>
+                                <select class="form-select" name="prioridad">
+                                    <option value="Baja">Baja</option>
+                                    <option value="Media" selected>Media (Normal)</option>
+                                    <option value="Alta">Alta (Urgente)</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Descripción del Problema</label>
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">Fotografía del Problema (Opcional)</label>
+                                    <input type="file" class="form-control" name="foto" accept="image/png, image/jpeg, image/webp">
+                                    <div class="form-text text-muted small">Formatos permitidos: JPG, PNG. Se recomienda tomar la foto en el lugar.</div>
+                                </div>
+                                <textarea class="form-control" name="descripcion" rows="4" placeholder="Ej: Bache profundo en la esquina que junta agua..." required></textarea>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-institucional bg-institucional text-white btn-lg fw-bold shadow-sm">
+                                    <i class="bi bi-send-check me-2"></i>Enviar Reclamo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Inicializamos el mapa centrado en Villa Ángela, Chaco
+        var coord_villa_angela = [-27.5738, -60.7153];
+        var map = L.map('mapa-incidencia').setView(coord_villa_angela, 14);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Creamos un marcador ARRASTRABLE
+        var marcador = L.marker(coord_villa_angela, {draggable: true}).addTo(map);
+
+        // Función centralizada para actualizar los campos ocultos
+        function actualizarCoordenadas(lat, lng) {
+            document.getElementById('latitud').value = lat.toFixed(6);
+            document.getElementById('longitud').value = lng.toFixed(6);
+        }
+
+        // Seteamos las coordenadas por defecto al iniciar
+        actualizarCoordenadas(coord_villa_angela[0], coord_villa_angela[1]);
+
+        // Evento 1: Si el usuario arrastra el marcador
+        marcador.on('dragend', function (e) {
+            var posicion = e.target.getLatLng();
+            actualizarCoordenadas(posicion.lat, posicion.lng);
+        });
+
+        // Evento 2: Si el usuario hace clic en cualquier parte del mapa
+        map.on('click', function(e) {
+            marcador.setLatLng(e.latlng); // Movemos el marcador ahí
+            actualizarCoordenadas(e.latlng.lat, e.latlng.lng);
+        });
+
+        // Evento 3: GEOLOCALIZACIÓN AUTOMÁTICA
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    var userCoords = [position.coords.latitude, position.coords.longitude];
+                    // Centramos el mapa en el usuario con más zoom
+                    map.setView(userCoords, 16);
+                    marcador.setLatLng(userCoords);
+                    actualizarCoordenadas(userCoords[0], userCoords[1]);
+                }, 
+                function(error) {
+                    console.log("El usuario denegó el GPS o no está disponible. Usando coordenadas por defecto.");
+                },
+                { enableHighAccuracy: true }
+            );
+        }
+    });
+</script>
+{% endblock %}

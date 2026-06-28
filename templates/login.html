@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-5 col-lg-4 mt-5">
+        
+        <div class="text-center mb-4">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" width="70" class="bg-white rounded-circle p-2 shadow-sm mb-3">
+            <h3 class="fw-bold text-dark">Iniciar Sesión</h3>
+            <p class="text-muted">Portal de Gestión de Incidencias</p>
+        </div>
+
+        <div class="card shadow-lg border-0" style="border-top: 4px solid var(--verde-institucional); border-radius: 12px;">
+            <div class="card-body p-4">
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+                
+                <form action="/login" method="POST">
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary">Correo Electrónico o DNI</label>
+                        <div class="input-group shadow-sm">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0 bg-light" name="usuario" placeholder="Ingrese su usuario" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-secondary">Contraseña</label>
+                        <div class="input-group shadow-sm">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
+                            <input type="password" class="form-control border-start-0 bg-light" name="password" placeholder="••••••••" required>
+                        </div>
+                        <div class="text-end mt-1">
+                            <a href="#" class="text-decoration-none small text-institucional">¿Olvidó su contraseña?</a>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-institucional bg-institucional text-white fw-bold py-2 shadow-sm">
+                            Ingresar
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+            <div class="card-footer bg-light text-center py-3 border-0" style="border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+                <span class="text-muted small">¿No tiene una cuenta?</span> 
+                <a href="/registro" class="text-institucional fw-bold text-decoration-none small ms-1">Regístrese aquí</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

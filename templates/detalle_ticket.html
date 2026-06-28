@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+
+
+<div class="row mt-4 mb-5">
+
+    <div class="col-12 d-flex justify-content-between align-items-center mb-4">
+
+        <div class="d-flex align-items-center">
+
+            <a href="/bandeja-tickets" class="btn btn-outline-secondary rounded-circle me-3"><i class="bi bi-arrow-left"></i></a>
+
+            <h2 class="fw-bold mb-0">Gestión de Ticket #{{ ticket[0] }}</h2>
+
+        </div>
+
+        <span class="badge bg-secondary fs-5 px-4 py-2 rounded-pill shadow-sm">ESTADO: {{ ticket[4]|upper }}</span>
+
+    </div>
+
+
+
+    <div class="col-lg-7 mb-4">
+
+        <div class="card shadow-sm border-0 h-100">
+
+            <div class="card-body p-4">
+
+                <h5 class="fw-bold text-institucional mb-4"><i class="bi bi-info-square me-2"></i>Información del Ticket</h5>
+
+               
+
+                <div class="row mb-4">
+
+                    <div class="col-sm-4">
+
+                        <p class="text-muted mb-1 small fw-bold">Fecha de Ingreso</p>
+
+                        <p class="mb-0"><i class="bi bi-calendar3 me-2 text-secondary"></i>{{ ticket[1].strftime('%d/%m/%Y %H:%M') }}</p>
+
+                    </div>
+
+                    <div class="col-sm-4">
+
+                        <p class="text-muted mb-1 small fw-bold">Tipología</p>
+
+                        <p class="mb-0"><i class="bi bi-tag me-2 text-secondary"></i>{{ ticket[2] }}</p>
+
+                    </div>
+
+                    <div class="col-sm-4">
+
+                        <p class="text-muted mb-1 small fw-bold">Prioridad</p>
+
+                        <p class="mb-0 fw-bold
+
+                            {% if ticket[3] == 'Alta' %}text-danger{% elif ticket[3] == 'Media' %}text-warning{% else %}text-info{% endif %}">
+
+                            {{ ticket[3] }}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <hr class="text-muted opacity-25">
+
+
+
+                <h6 class="fw-bold text-dark mt-4 mb-3"><i class="bi bi-person me-2 text-institucional"></i>Datos del Solicitante</h6>
+
+                <div class="row mb-4">
+
+                    <div class="col-sm-6"><p class="mb-1"><span class="text-muted me-2">Nombre:</span> {{ ticket[5] }}</p></div>
+
+                    <div class="col-sm-6"><p class="mb-1"><span class="text-muted me-2">DNI:</span> {{ ticket[6] }}</p></div>
+
+                    <div class="col-sm-12"><p class="mb-0"><span class="text-muted me-2">Contacto:</span> {{ ticket[7] }}</p></div>
+
+                </div>
+
+
+
+                <h6 class="fw-bold text-dark mb-3"><i class="bi bi-chat-left-text me-2 text-institucional"></i>Descripción del Problema</h6>
+
+                <div class="bg-light p-3 rounded mb-4 text-secondary border">
+
+                    {{ ticket[8] }}
+
+                </div>
+
+
+
+                <h6 class="fw-bold text-dark mb-3"><i class="bi bi-geo-alt me-2 text-institucional"></i>Ubicación del Reclamo</h6>
+
+                <div id="mapa-detalle" class="rounded border shadow-sm" style="height: 280px; width: 100%;"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="col-lg-5 mb-4">
+
+        <div class="card shadow-sm border-0 h-100" style="border-top: 4px solid var(--verde-institucional);">
+
+            <div class="card-body p-4">
+
+                <h5 class="fw-bold text-dark mb-4"><i class="bi bi-tools me-2 text-institucional"></i>Asignación y Estado</h5>
+
+               
+
+                <form action="/ticket/{{ ticket[0] }}/asignar" method="POST" class="mb-4 bg-light p-3 rounded border">
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold text-dark">1. Asignar a Cuadrilla Operativa</label>
+
+                        <select class="form-select" name="cuadrilla_id" required>
+
+                            <option value="" selected disabled>Seleccione una cuadrilla...</option>
+
+                            {% for c in cuadrillas %}
+
+                                <option value="{{ c[0] }}">{{ c[1] }}</option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <button type="submit" class="btn btn-institucional bg-institucional text-white w-100 fw-bold shadow-sm">
+
+                        <i class="bi bi-truck me-2"></i>Emitir Orden de Trabajo
+
+                    </button>
+
+                </form>
+
+
+
+                <hr class="text-muted opacity-25 my-4">
+
+
+
+                <form action="/ticket/{{ ticket[0] }}/estado" method="POST">
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold text-dark">2. Actualizar Estado de Gestión</label>
+
+                        <select class="form-select" name="nuevo_estado" required>
+
+                            <option value="" selected disabled>Seleccione un nuevo estado...</option>
+
+                            <option value="Pendiente">Pendiente</option>
+
+                            <option value="Asignado">Asignado</option>
+
+                            <option value="En Proceso">En Proceso</option>
+
+                            <option value="Esperando Materiales">Esperando Materiales</option>
+
+                            <option value="Resuelto">Resuelto</option>
+
+                            <option value="Desestimado">Desestimado</option>
+
+                        </select>
+
+                    </div>
+
+                    <button type="submit" class="btn btn-outline-dark w-100 fw-bold">
+
+                        <i class="bi bi-arrow-repeat me-2"></i>Actualizar Estado
+
+                    </button>
+
+                </form>          
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function() {
+
+        // Envolvemos las variables de Flask en comillas para evitar errores de sintaxis
+
+        var lat = parseFloat("{{ ticket[9] }}");
+
+        var lng = parseFloat("{{ ticket[10] }}");
+
+        var tipologia = "{{ ticket[2] }}";
+
+       
+
+        // Centramos el mapa en ese punto
+
+        var map = L.map('mapa-detalle').setView([lat, lng], 16);
+
+       
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+
+            attribution: '© OpenStreetMap contributors'
+
+        }).addTo(map);
+
+       
+
+        // Colocamos el marcador rojo
+
+        L.marker([lat, lng]).addTo(map)
+
+            .bindPopup("<b class='text-institucional'>Lugar del problema</b><br>" + tipologia)
+
+            .openPopup();
+
+    });
+
+</script>
+
+{% endblock %}

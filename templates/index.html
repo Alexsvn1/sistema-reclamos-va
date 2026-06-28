@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.12) !important;
+    }
+    .hero-img {
+        border-radius: 20px;
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.175);
+        object-fit: cover;
+        height: 400px;
+        width: 100%;
+    }
+    .step-icon {
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background-color: #e8f5e9; /* Verde muy clarito */
+        margin: 0 auto 1rem auto;
+    }
+</style>
+
+<div class="row align-items-center mb-5 mt-2 g-5">
+    <div class="col-lg-6">
+        <span class="badge bg-institucional mb-3 px-3 py-2 rounded-pill shadow-sm fs-6"><i class="bi bi-geo-alt-fill me-1"></i> Secretaría de Servicios Públicos</span>
+        <h1 class="display-4 fw-bold text-dark mb-4">Bienvenido a su ciudad conectada.</h1>
+        <p class="lead text-muted mb-4">Plataforma oficial para la gestión, reporte y seguimiento de incidencias urbanas en Villa Ángela. Un canal directo para mejorar nuestros espacios públicos.</p>
+        
+        <div class="d-flex gap-3">
+            {% if session.get('usuario_id') %}
+                <a href="/nuevo-reclamo" class="btn btn-institucional bg-institucional text-white btn-lg rounded-pill px-4 fw-bold shadow">
+                    <i class="bi bi-plus-circle me-1"></i> Reportar Incidencia
+                </a>
+            {% else %}
+                <a href="/registro" class="btn btn-institucional bg-institucional text-white btn-lg rounded-pill px-4 fw-bold shadow">
+                    <i class="bi bi-person-plus me-1"></i> Crear Cuenta
+                </a>
+            {% endif %}
+            
+            <a href="#como-funciona" class="btn btn-outline-secondary btn-lg rounded-pill px-4 fw-bold">
+                <i class="bi bi-play-circle me-1"></i> Cómo funciona
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <img src="{{ url_for('static', filename='img/villa1.jpg') }}" class="hero-img" alt="Vista de Villa Ángela">
+    </div>
+</div>
+
+<div class="row text-center mb-5 mt-3 g-3">
+    <div class="col-md-4">
+        <div class="bg-white p-4 rounded-4 shadow-sm border-bottom border-4 border-primary">
+            <h2 class="display-5 fw-bold text-dark mb-0">2.453</h2>
+            <p class="text-muted fw-semibold mb-0 mt-1">Reclamos Procesados</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="bg-white p-4 rounded-4 shadow-sm border-bottom border-4 border-success">
+            <h2 class="display-5 fw-bold text-success mb-0">91%</h2>
+            <p class="text-muted fw-semibold mb-0 mt-1">Tasa de Resolución</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="bg-white p-4 rounded-4 shadow-sm border-bottom border-4 border-warning">
+            <h2 class="display-5 fw-bold text-dark mb-0">48 hs</h2>
+            <p class="text-muted fw-semibold mb-0 mt-1">Tiempo Promedio</p>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center g-4 mb-5">
+    
+    {% if not session.get('usuario_id') or session.get('rol') == 'Ciudadano' %}
+    <div class="col-md-{% if session.get('rol') == 'Ciudadano' %}8{% else %}5{% endif %}">
+        <div class="card h-100 hover-card p-4 text-center" style="border-top: 5px solid var(--verde-claro);">
+            <div class="card-body">
+                <div class="bg-light rounded-circle d-inline-block p-4 mb-3">
+                    <i class="bi bi-people-fill display-5 text-institucional"></i>
+                </div>
+                
+                {% if session.get('rol') == 'Ciudadano' %}
+                    <h3 class="fw-bold mb-3">Tus Trámites</h3>
+                    <p class="text-muted mb-4">Gestione sus reclamos activos, consulte el historial de resoluciones y reporte nuevas incidencias en la vía pública.</p>
+                    <div class="d-flex gap-3 justify-content-center mt-4">
+                        <a href="/nuevo-reclamo" class="btn btn-institucional bg-institucional text-white rounded-pill px-4 fw-bold py-2 shadow-sm"><i class="bi bi-plus-circle me-1"></i> Nuevo Reclamo</a>
+                        <a href="/mis-tickets" class="btn btn-outline-success rounded-pill px-4 fw-bold py-2"><i class="bi bi-card-list me-1"></i> Mis Tickets</a>
+                    </div>
+                {% else %}
+                    <h3 class="fw-bold mb-3">Portal Ciudadano</h3>
+                    <p class="text-muted mb-4">Ingrese para registrar nuevos reclamos de bacheo, iluminación o residuos, y consulte el estado de sus solicitudes previas.</p>
+                    <a href="/login" class="btn btn-outline-success rounded-pill w-100 fw-bold py-2 mt-2">Acceder al Portal</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if not session.get('usuario_id') or session.get('rol') in ['Administrador', 'Operador'] %}
+    <div class="col-md-{% if session.get('rol') in ['Administrador', 'Operador'] %}8{% else %}5{% endif %}">
+        <div class="card h-100 hover-card p-4 text-center" style="border-top: 5px solid #424242;">
+            <div class="card-body">
+                <div class="bg-light rounded-circle d-inline-block p-4 mb-3">
+                    <i class="bi bi-building-fill-gear display-5 text-secondary"></i>
+                </div>
+                
+                {% if session.get('rol') in ['Administrador', 'Operador'] %}
+                    <h3 class="fw-bold mb-3">Intranet Municipal</h3>
+                    <p class="text-muted mb-4">Acceso a los módulos de gestión operativa, asignación de cuadrillas y auditoría del sistema.</p>
+                    <a href="/dashboard" class="btn btn-dark rounded-pill px-5 fw-bold py-2 mt-4 shadow-sm"><i class="bi bi-grid-1x2 me-1"></i> Ir al Panel de Control</a>
+                {% else %}
+                    <h3 class="fw-bold mb-3">Portal Municipal (Intranet)</h3>
+                    <p class="text-muted mb-4">Acceso exclusivo para operadores y administradores. Derivación de tickets, control de cuadrillas y analítica de datos.</p>
+                    <a href="/login" class="btn btn-dark rounded-pill w-100 fw-bold py-2 mt-2 shadow-sm">Acceso Personal</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<div id="como-funciona" class="pt-4 pb-3">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">¿Cómo funciona el sistema?</h2>
+        <p class="text-muted fs-5">Un proceso transparente desde el reporte hasta la solución.</p>
+    </div>
+    
+    <div class="row text-center g-4 position-relative">
+        <div class="col-md-4">
+            <div class="step-icon shadow-sm">
+                <i class="bi bi-geo-alt display-6 text-institucional"></i>
+            </div>
+            <h4 class="fw-bold">1. Reportar</h4>
+            <p class="text-muted px-3">Seleccioná la ubicación en el mapa interactivo y detallá el problema (con opción a foto).</p>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="step-icon shadow-sm">
+                <i class="bi bi-search display-6 text-institucional"></i>
+            </div>
+            <h4 class="fw-bold">2. Seguimiento</h4>
+            <p class="text-muted px-3">El municipio recibe, clasifica y deriva el ticket. Consultá el estado en tiempo real.</p>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="step-icon shadow-sm">
+                <i class="bi bi-check2-circle display-6 text-institucional"></i>
+            </div>
+            <h4 class="fw-bold">3. Resolución</h4>
+            <p class="text-muted px-3">La cuadrilla interviene en el lugar, documenta el trabajo y el ticket se marca como resuelto.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

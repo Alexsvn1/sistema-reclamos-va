@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mt-5 mb-5">
+    <div class="col-12 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-5 offset-lg-3.5 col-xl-4 offset-xl-4">
+        
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-body p-4 p-sm-5">
+                
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold text-dark mb-1">Crear Cuenta</h3>
+                    <p class="text-muted small">Registrate para reportar incidencias y hacer el seguimiento de tus trámites en la ciudad</p>
+                </div>
+
+                <form action="/registro" method="POST">
+                    
+                    <div class="mb-3">
+                        <label for="nombre_completo" class="form-label small fw-bold text-secondary">Nombre y Apellido completo</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control bg-light border-start-0 ps-0 text-dark small" id="nombre_completo" name="nombre_completo" required maxlength="150" placeholder="Ej: Juan Pérez">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="dni" class="form-label small fw-bold text-secondary">Número de DNI</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-card-text"></i></span>
+                            <input type="text" class="form-control bg-light border-start-0 ps-0 text-dark small" id="dni" name="dni" required pattern="^[0-9]{7,8}$" title="El DNI debe contener solo números, entre 7 y 8 dígitos sin puntos." placeholder="Ej: 40123456">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="correo" class="form-label small fw-bold text-secondary">Correo Electrónico</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control bg-light border-start-0 ps-0 text-dark small" id="correo" name="correo" required maxlength="150" placeholder="juan.perez@email.com">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label small fw-bold text-secondary">Contraseña de Acceso</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control bg-light border-start-0 ps-0 text-dark small" id="password" name="password" required placeholder="Crea una contraseña segura">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 rounded-pill fw-bold py-2.5 mb-3 shadow-sm">
+                        <i class="bi bi-check-circle me-1"></i> Completar Registro
+                    </button>
+
+                    <div class="text-center mt-3">
+                        <span class="text-muted small">¿Ya tenés una cuenta registrada? <a href="/login" class="text-institucional text-decoration-none fw-bold ms-1">Iniciá Sesión</a></span>
+                    </div>
+                </form>
+                
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}
