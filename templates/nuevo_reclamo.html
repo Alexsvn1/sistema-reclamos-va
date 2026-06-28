@@ -117,18 +117,18 @@
             actualizarCoordenadas(posicion.lat, posicion.lng);
         });
 
-        // Evento 2: Si el usuario hace clic en cualquier parte del mapa
+        // wl usuario hace clic en cualquier parte del mapa
         map.on('click', function(e) {
-            marcador.setLatLng(e.latlng); // Movemos el marcador ahí
+            marcador.setLatLng(e.latlng); // Movemos el marcador ahi
             actualizarCoordenadas(e.latlng.lat, e.latlng.lng);
         });
 
-        // Evento 3: GEOLOCALIZACIÓN AUTOMÁTICA
+        // GEOLOCALIZACIÓN AUTOMÁTICA
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 function(position) {
                     var userCoords = [position.coords.latitude, position.coords.longitude];
-                    // Centramos el mapa en el usuario con más zoom
+                    // Centramos el mapa en el usuario
                     map.setView(userCoords, 16);
                     marcador.setLatLng(userCoords);
                     actualizarCoordenadas(userCoords[0], userCoords[1]);

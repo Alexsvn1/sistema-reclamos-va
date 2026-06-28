@@ -206,7 +206,7 @@
 
     document.addEventListener("DOMContentLoaded", function() {
 
-        // Envolvemos las variables de Flask en comillas para evitar errores de sintaxis
+        
 
         var lat = parseFloat("{{ ticket[9] }}");
 
@@ -216,7 +216,7 @@
 
        
 
-        // Centramos el mapa en ese punto
+        
 
         var map = L.map('mapa-detalle').setView([lat, lng], 16);
 
@@ -230,7 +230,7 @@
 
        
 
-        // Colocamos el marcador rojo
+        
 
         L.marker([lat, lng]).addTo(map)
 

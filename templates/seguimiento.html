@@ -35,21 +35,21 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // 1. Inicializamos el mapa
+        
         var map = L.map('map').setView([-27.5738, -60.7153], 14);
         
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap'
         }).addTo(map);
 
-        // 2. Función de colores
+        
         function mapearColorPrioridad(prioridad) {
             if (prioridad === 'Crítica' || prioridad === 'Alta') return '#dc3545';
             if (prioridad === 'Media') return '#ffc107';
             return '#6c757d';
         }
 
-        // 3. Inyectamos los marcadores directo desde Jinja sin usar "let"
+        
         {% for t in tickets %}
             {% if t[5] and t[6] %}
                 L.circleMarker([{{ t[5] }}, {{ t[6] }}], {
